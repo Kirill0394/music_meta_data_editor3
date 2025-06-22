@@ -1,0 +1,10 @@
+{
+  "name": "music_meta_data_editor3",
+  "homepage": "https://Kirill0394.github.io/music_meta_data_editor3",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  }
+}
