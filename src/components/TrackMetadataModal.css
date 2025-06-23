@@ -34,6 +34,10 @@
 .field {
     margin-bottom: 1rem;
 }
+.input {
+    width: 45%;
+}
+
 
 .label {
     display: block;
@@ -72,6 +76,13 @@
     border-radius: 0.375rem;
     font-size: 0.875rem;
 }
+/*.preview-texts {*/
+/*    justify-content: space-between ;*/
+
+/*    .authors-text {*/
+/*        right: 50px;*/
+/*    }*/
+/*}*/
 
 .preview__label {
     display: block;
@@ -80,6 +91,7 @@
 
 .preview__text {
     white-space: pre-wrap;
+    justify-content: space-between;
 }
 
 /* Дополнительный элемент для переключателя тональности */

@@ -49,26 +49,32 @@ export default function TrackMetadataModal() {
             const an = form.operaAct ? ` Act ${form.operaAct}` : "";
             const sn = form.operaScene ? ` Scene ${form.operaScene}` : "";
             const ex = form.operaExcerpt ? ` — ${form.operaExcerpt}` : "";
-            const v = form.version ? ` (${form.version})` : "";
+            const v = form.vrsn ? ` (${form.vrsn})` : "";
             return `${o}${an}${sn}${ex}${v}`.trim();
         }
         const work = form.workTitle || "";
-        const partNo = form.partNumber ? ` No.${form.partNumber}` : "";
-        const partTitle = form.partTitle ? ` ${form.partTitle}` : "";
         const key = keyBlock && form.key ?
             ` in ${form.key}${form.acc === "sharp" ? "#" : form.acc === "flat" ? "♭" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
         const opus = form.opus ? `, Op. ${form.opus}` : "";
         const cat = form.catalog ? `, ${form.catalog}` : "";
         const nick = form.nickname ? ` "${form.nickname}"` : "";
-        const ver = form.version ? ` (v${form.version})` : "";
-        return `${work}${partNo}${partTitle}${key}${opus}${cat}${nick}${ver}`.trim();
+        const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
+        const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
+        const ver = form.vrsn ? ` (${form.vrsn})` : "";
+        return `${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
     }, [form, keyBlock, opera]);
+
+    const authors = useMemo(() => {
+        const orchestra = form.orchestra || '';
+        const conductor = form.conductor ? form.orchestra ? `, ${form.conductor}` : `${form.conductor}` : '';
+        const soloist = form.soloist ? form.conductor || form.orchestra ? `, ${form.soloist}` : `${form.soloist}` : '';
+        return `${orchestra}${conductor}${soloist}`.trim();
+    }, [form]);
 
     return (
         <>
-            {/*<button className="btn" onClick={() => setOpen(true)}>Track metadata</button>*/}
             {open && (
-                <div className="dialog-overlay" onClick={() => setOpen(false)}>
+                <div className="dialog-overlay">
                     <div className="dialog" onClick={e => e.stopPropagation()}>
                         <h2 className="dialog-title">Метаданные трека</h2>
                         {/* content type */}
@@ -147,9 +153,9 @@ export default function TrackMetadataModal() {
                                 <InputField label="Номер сцены" val={form.operaScene} set={upd("operaScene")} />
                             </>
                         )}
-                        <InputField label="Версия/Подзаголовок" val={form.version} set={upd("version")} />
+                        <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")} />
 
-                        <Preview text={preview} />
+                        <Preview track={preview} authors={authors} />
 
                         {/* contributors */}
                         <InputField label="Оркестр или хор" val={form.orchestra} set={upd("orchestra")} />
@@ -193,7 +199,6 @@ export default function TrackMetadataModal() {
                             </>
                         )}
 
-                        {/*<div className="actions"><button className="btn" onClick={() => setOpen(false)}>Закрыть</button></div>*/}
                     </div>
                 </div>
             )}
@@ -230,6 +235,13 @@ const Sel = ({ val, set, ph, arr }) => (
     </select>
 );
 
-const Preview = ({ text }) => (
-    <div className="preview"><div className="preview-label">Полный предварительный просмотр</div><div className="preview-text">{text || "—"}</div></div>
+const Preview = ({ track, authors }) => (
+    <div className="preview">
+        <div className="preview-label">Полный предварительный просмотр</div>
+        <div className="preview-texts">
+            <div className="track-text">{track || "—"}</div>
+            <div className="authors-text">{authors || "—"}</div>
+        </div>
+
+    </div>
 );
