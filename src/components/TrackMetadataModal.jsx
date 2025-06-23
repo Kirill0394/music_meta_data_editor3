@@ -2,6 +2,56 @@
 import { useState, useMemo } from "react";
 import "./TrackMetadataModal.css";
 
+const ToneSelector = ({ val, set }) => (
+    <div className="tone-selector">
+        {KEYS.map(note => (
+            <div
+                key={note}
+                className={`tone-option${val === note ? " selected" : ""}`}
+                onClick={() => set(note)}
+            >
+                {note}
+            </div>
+        ))}
+    </div>
+);
+
+const AlterationSelector = ({ val, set }) => (
+    <div className="alteration-selector">
+        {[
+            ["sharp", "#"],
+            ["flat", "♭"],
+            ["nat", "♮"]
+        ].map(([v, label]) => (
+            <div
+                key={v}
+                className={`alteration-option${val === v ? " selected" : ""}`}
+                onClick={() => set(v)}
+            >
+                {label}
+            </div>
+        ))}
+    </div>
+);
+
+const ModeSelector = ({ val, set }) => (
+    <div className="mode-selector">
+        {[
+            ["minor", "Минор"],
+            ["major", "Мажор"]
+        ].map(([v, label]) => (
+            <div
+                key={v}
+                className={`mode-option${val === v ? " selected" : ""}`}
+                onClick={() => set(v)}
+            >
+                {label}
+            </div>
+        ))}
+    </div>
+);
+
+
 const YEARS = Array.from({ length: 126 }, (_, i) => 2025 - i);
 const KEYS = [
     "C","D","E","F","G","A","B",
@@ -133,13 +183,13 @@ export default function TrackMetadataModal() {
                                 {form.keySpecified && (
                                     <>
                                         <Field label="Тональность" req>
-                                            <Sel val={form.key} set={upd("key")} ph="- выберите -" arr={KEYS} />
+                                            <ToneSelector val={form.key} set={upd("key")} />
                                         </Field>
-                                        <Field>
-                                            <RG val={form.acc || "nat"} set={upd("acc")} opts={{ sharp: "#", flat: "♭", nat: "♮" }} />
+                                        <Field label="Знак альтерации">
+                                            <AlterationSelector val={form.acc || "nat"} set={upd("acc")} />
                                         </Field>
-                                        <Field>
-                                            <RG val={form.mode || "major"} set={upd("mode")} opts={{ minor: "Минор", major: "Мажор" }} />
+                                        <Field label="Лад">
+                                            <ModeSelector val={form.mode || "major"} set={upd("mode")} />
                                         </Field>
                                     </>
                                 )}

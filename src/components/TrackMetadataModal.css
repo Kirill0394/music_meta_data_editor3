@@ -101,3 +101,83 @@
     gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
+
+.tone-selector {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.tone-option {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.tone-option:hover {
+    border-color: #888;
+}
+
+.tone-option.selected {
+    background-color: #444;
+    color: #fff;
+    border-color: #444;
+}
+
+/* селекторы одинаковы */
+.alteration-selector,
+.mode-selector {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+/* кружки для альтерации */
+.alteration-option {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* прямоугольники для мажор/минор */
+.mode-option {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.5rem;
+    padding: 0.25rem 0.75rem;
+    height: auto;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.alteration-option:hover,
+.mode-option:hover {
+    border-color: #888;
+}
+
+.alteration-option.selected,
+.mode-option.selected {
+    background-color: #444;
+    color: #fff;
+    border-color: #444;
+}
+
