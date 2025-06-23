@@ -52,7 +52,8 @@ export default function TrackMetadataModal() {
             const v = form.vrsn ? ` (${form.vrsn})` : "";
             return `${o}${an}${sn}${ex}${v}`.trim();
         }
-        const work = form.workTitle || "";
+        const composer = form.composer ?  `${form.composer}: ` : "";
+        const work = form.workTitle || '';
         const key = keyBlock && form.key ?
             ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
         const opus = form.opus ? `, Op. ${form.opus}` : "";
@@ -61,7 +62,7 @@ export default function TrackMetadataModal() {
         const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
         const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
         const ver = form.vrsn ? ` (${form.vrsn})` : "";
-        return `${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
+        return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
     }, [form, keyBlock, opera]);
 
     const authors = useMemo(() => {
