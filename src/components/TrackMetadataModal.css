@@ -1,0 +1,68 @@
+/* TrackMetadataModal.css */
+
+/* Диалог */
+.dialog-content {
+    max-height: 100vh;
+    overflow-y: auto;
+    width: 48rem; /* 768px */
+}
+
+/* Поля формы */
+.field {
+    margin-bottom: 1rem;
+}
+
+.label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.label--required {
+    color: #e00; /* красный для обязательных */
+}
+
+/* Радиокнопки */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+}
+
+/* Селекты */
+.select-trigger {
+    width: 100%;
+}
+
+/* Превью */
+.preview {
+    margin-bottom: 1.5rem;
+    background-color: #7a7a7a;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.preview__label {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.preview__text {
+    white-space: pre-wrap;
+}
+
+/* Дополнительный элемент для переключателя тональности */
+.key-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
