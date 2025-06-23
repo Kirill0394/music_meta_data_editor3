@@ -75,6 +75,7 @@
     padding: 0.75rem;
     border-radius: 0.375rem;
     font-size: 0.875rem;
+    max-width: 43%
 }
 /*.preview-texts {*/
 /*    justify-content: space-between ;*/
