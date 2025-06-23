@@ -112,6 +112,7 @@ export default function TrackMetadataModal() {
                         </Field>
 
                         {/* titles */}
+                        <InputField label="Композитор" req val={form.composer} set={upd("composer")} />
                         {!opera && <InputField label="Название произведения" req val={form.workTitle} set={upd("workTitle")} />}
                         {opera && <InputField label="Название оперы" req val={form.operaTitle} set={upd("operaTitle")} />}
                         {opera && <InputField label="Название отрывка" val={form.operaExcerpt} set={upd("operaExcerpt")} />}
@@ -147,7 +148,7 @@ export default function TrackMetadataModal() {
 
                         {!opera && <InputField label="Номер опуса" val={form.opus} set={upd("opus")} />}
                         {!opera && <InputField label="Номер в каталоге" val={form.catalog} set={upd("catalog")} />}
-                        {!opera && <InputField label="Псевдоним" val={form.nickname} set={upd("nickname")} />}
+                        {!opera && <InputField label="Псевдоним (доп. название)" val={form.nickname} set={upd("nickname")} />}
                         {opera && (
                             <>
                                 <InputField label="Номер акта" val={form.operaAct} set={upd("operaAct")} />
@@ -172,7 +173,7 @@ export default function TrackMetadataModal() {
                         <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")} />
                         <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")} />
                         <InputField label="Автор" val={form.author} set={upd("author")} />
-                        <InputField label="Композитор" req val={form.composer} set={upd("composer")} />
+                        <InputField label="Композитор(meta_data)" val={form.composer_meta} set={upd("composer_meta")} />
                         <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")} />
 
                         {/* rights */}
