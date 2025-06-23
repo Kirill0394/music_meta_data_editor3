@@ -4,7 +4,7 @@ import "./TrackMetadataModal.css";
 
 const YEARS = Array.from({ length: 126 }, (_, i) => 2025 - i);
 const KEYS = [
-    "C","C#","Db","D","D#","Eb","E","F","F#","Gb","G","G#","Ab","A","A#","Bb","B",
+    "C","D","E","F","G","A","B",
 ];
 const GENRES = ["Classical","Romantic","Baroque","Contemporary","Early Music"];
 const SUBGENRES = [
@@ -54,7 +54,7 @@ export default function TrackMetadataModal() {
         }
         const work = form.workTitle || "";
         const key = keyBlock && form.key ?
-            ` in ${form.key}${form.acc === "sharp" ? "#" : form.acc === "flat" ? "♭" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
+            ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
         const opus = form.opus ? `, Op. ${form.opus}` : "";
         const cat = form.catalog ? `, ${form.catalog}` : "";
         const nick = form.nickname ? ` "${form.nickname}"` : "";
