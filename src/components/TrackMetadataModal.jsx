@@ -105,33 +105,66 @@ export default function TrackMetadataModal() {
 
     /* preview */
     const preview = useMemo(() => {
-        if (opera) {
-            const o = form.operaTitle || "";
-            const an = form.operaAct ? ` Act ${form.operaAct}` : "";
-            const sn = form.operaScene ? ` Scene ${form.operaScene}` : "";
-            const ex = form.operaExcerpt ? ` — ${form.operaExcerpt}` : "";
-            const v = form.vrsn ? ` (${form.vrsn})` : "";
-            return `${o}${an}${sn}${ex}${v}`.trim();
+        if (cls) {
+            if (opera) {
+                const c = form.composer ?  `${form.composer}: ` : "";
+                const o = form.operaTitle || "";
+                const an = form.operaAct ? `, Act ${form.operaAct}` : "";
+                const sn = form.operaScene ? `, Scene ${form.operaScene}` : "";
+                const ex = form.operaExcerpt ? ` — ${form.operaExcerpt}` : "";
+                const v = form.vrsn ? ` (${form.vrsn})` : "";
+                return `${c}${o}${an}${sn}${ex}${v}`.trim();
+            }
+            const composer = form.composer ?  `${form.composer}: ` : "";
+            const work = form.workTitle || '';
+            const key = keyBlock && form.key ?
+                ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
+            const opus = form.opus ? `, Op. ${form.opus}` : "";
+            const cat = form.catalog ? `, ${form.catalog}` : "";
+            const nick = form.nickname ? ` "${form.nickname}"` : "";
+            const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
+            const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
+            const ver = form.vrsn ? ` (${form.vrsn})` : "";
+            return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
         }
-        const composer = form.composer ?  `${form.composer}: ` : "";
-        const work = form.workTitle || '';
-        const key = keyBlock && form.key ?
-            ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
-        const opus = form.opus ? `, Op. ${form.opus}` : "";
-        const cat = form.catalog ? `, ${form.catalog}` : "";
-        const nick = form.nickname ? ` "${form.nickname}"` : "";
-        const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
-        const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
-        const ver = form.vrsn ? ` (${form.vrsn})` : "";
-        return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
+        else if (music) {
+            const composer = form.composer ?  `${form.composer}: ` : "";
+            const work = form.workTitle || '';
+            const key = keyBlock && form.key ?
+                ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
+            const opus = form.opus ? `, Op. ${form.opus}` : "";
+            const cat = form.catalog ? `, ${form.catalog}` : "";
+            const nick = form.nickname ? ` "${form.nickname}"` : "";
+            const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
+            const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
+            const ver = form.vrsn ? ` (${form.vrsn})` : "";
+            return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
+        }
+
     }, [form, keyBlock, opera]);
 
     const authors = useMemo(() => {
-        const orchestra = form.orchestra || '';
-        const conductor = form.conductor ? form.orchestra ? `, ${form.conductor}` : `${form.conductor}` : '';
-        const soloist = form.soloist ? form.conductor || form.orchestra ? `, ${form.soloist}` : `${form.soloist}` : '';
-        return `${orchestra}${conductor}${soloist}`.trim();
-    }, [form]);
+        /* 1. Набираем все существующие значения в массив */
+        const parts = [];
+
+        if (form.author)    parts.push(form.author);
+        if (form.orchestra) parts.push(form.orchestra);
+        if (form.conductor) parts.push(form.conductor);
+        if (form.soloist)   parts.push(form.soloist);
+
+        /* 2. Склеиваем через запятую  */
+        let base = parts.join(', ');
+
+        /* 3. Добавляем «feat.»-часть, если нужна */
+        if (form.featured) base += ` (feat. ${form.featured})`;
+
+        /* 4. Возвращаем в нужном «режиме» */
+        if (cls)   return base.trim();                    // полная строка
+        if (music) return `${form.author ?? ''}${form.featured ? ` (feat. ${form.featured})` : ''}`.trim();
+
+        return '';                                       // на всякий случай
+    }, [form, cls, music]);
+
 
     return (
         <>
@@ -187,7 +220,10 @@ export default function TrackMetadataModal() {
                                             val={form.vrsn}
                                             set={upd("vrsn")}
                                 />
-                                <Field label="Основной исполнитель" req>
+
+                                <Preview track={preview} authors={authors}/>
+
+                                <Field label="Основной исполнитель">
 
                                     <InputField val={form.mainPerformer} set={upd("mainPerformer")}/>
                                     <Field label="Инструмент исполнителя">
@@ -202,7 +238,7 @@ export default function TrackMetadataModal() {
                                 </Field>
                                 <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
                                 <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
-                                <InputField label="Композитор(meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
+                                <InputField label="Композитор (meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
                                 <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
 
                                 {/* rights */}
@@ -347,7 +383,7 @@ export default function TrackMetadataModal() {
                                 <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
                                 <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
                                 <InputField label="Автор" val={form.author} set={upd("author")}/>
-                                <InputField label="Композитор(meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
+                                <InputField label="Композитор (meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
                                 <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
 
                                 {/* rights */}
