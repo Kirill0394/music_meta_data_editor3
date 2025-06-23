@@ -130,124 +130,163 @@ export default function TrackMetadataModal() {
                         <h2 className="dialog-title">Метаданные трека</h2>
                         {/* content type */}
                         <Field label="Тип контента" req>
-                            <RG val={form.contentType} set={upd("contentType")} opts={{ audio: "Аудио", video: "Видео" }} />
+                            <RG val={form.contentType} set={upd("contentType")}
+                                opts={{audio: "Аудио", video: "Видео"}}/>
                         </Field>
                         {/* main type */}
                         <Field label="Основной тип композиции" req>
                             <RG
                                 val={form.mainType}
-                                set={v => v !== "classical" ? setForm(p => ({ ...p, mainType: v, addType: "none" })) : upd("mainType")(v)}
-                                opts={{ music: "Музыка", classical: "Классическая музыка" }}
+                                set={v => v !== "classical" ? setForm(p => ({
+                                    ...p,
+                                    mainType: v,
+                                    addType: "none"
+                                })) : upd("mainType")(v)}
+                                opts={{music: "Музыка", classical: "Классическая музыка"}}
                             />
                         </Field>
                         {cls && (
                             <Field label="Дополнительный тип композиции" req>
-                                <RG val={form.addType} set={upd("addType")} opts={{ opera: "Опера", other: "Другая классическая музыка" }} />
+                                <RG val={form.addType} set={upd("addType")}
+                                    opts={{opera: "Опера", other: "Другая классическая музыка"}}/>
                             </Field>
                         )}
                         {cls && (
                             <Field label="Данная композиция – это" req>
                                 <RG val={form.whole ? "whole" : "part"} set={v => upd("whole")(v === "whole")}
-                                    opts={{ whole: "произведение целиком", part: "часть произведения" }} />
+                                    opts={{whole: "произведение целиком", part: "часть произведения"}}/>
                             </Field>
                         )}
                         {subtype && (
                             <Field label="Данное произведение – это" req>
-                                <RG val={form.subType} set={upd("subType")} opts={{ A: "A - Симфония...", B: "B - Этюд...", C: "C - Месса/Балет..." }} />
+                                <SubtypeRG val={form.subType} set={upd("subType")}
+                                    opts={{
+                                        A: "A - Симфония, концерт, сюита или соната",
+                                        B: "B - Этюд, часть сборника или темы и вариаций",
+                                        C: <>C - Месса, балет, этническая музыка, средневековая музыка,<br/>
+                                            прелюдия, фуга или музыка эпохи Возрождения</>
+                                    }}/>
                             </Field>
                         )}
                         <Field label="Инструментальная">
                             <RG val={form.instrumental ? "yes" : "no"} set={v => upd("instrumental")(v === "yes")}
-                                opts={{ yes: "Да", no: "Нет" }} />
+                                opts={{yes: "Да", no: "Нет"}}/>
                         </Field>
 
                         {/* titles */}
-                        <InputField label="Композитор" req val={form.composer} set={upd("composer")} />
-                        {!opera && <InputField label="Название произведения" req val={form.workTitle} set={upd("workTitle")} />}
-                        {opera && <InputField label="Название оперы" req val={form.operaTitle} set={upd("operaTitle")} />}
-                        {opera && <InputField label="Название отрывка" val={form.operaExcerpt} set={upd("operaExcerpt")} />}
+                        <InputField label="Композитор" req val={form.composer} set={upd("composer")}/>
+                        {!opera &&
+                            <InputField label="Название произведения" req val={form.workTitle} set={upd("workTitle")}/>}
+                        {opera &&
+                            <InputField label="Название оперы" req val={form.operaTitle} set={upd("operaTitle")}/>}
+                        {opera &&
+                            <InputField label="Название отрывка" val={form.operaExcerpt} set={upd("operaExcerpt")}/>}
                         {part && !opera && (
                             <>
-                                <InputField label="Номер части" val={form.partNumber} set={upd("partNumber")} />
-                                <InputField label="Название части" val={form.partTitle} set={upd("partTitle")} />
+                                <InputField label="Номер части" val={form.partNumber} set={upd("partNumber")}/>
+                                <InputField label="Название части" val={form.partTitle} set={upd("partTitle")}/>
                             </>
                         )}
+
+                        <div className="key-toggle">
+                            <input id="nokey" type="checkbox" checked={!form.keySpecified}
+                                   onChange={e => upd("keySpecified")(!e.target.checked)}/>
+                            <label htmlFor="nokey">Тональность не указана</label>
+                        </div>
 
                         {/* key */}
                         {keyBlock && (
                             <>
-                                <div className="key-toggle">
-                                    <input id="nokey" type="checkbox" checked={!form.keySpecified} onChange={e => upd("keySpecified")(!e.target.checked)} />
-                                    <label htmlFor="nokey">Тональность не указана</label>
-                                </div>
+
                                 {form.keySpecified && (
                                     <>
                                         <Field label="Тональность" req>
-                                            <ToneSelector val={form.key} set={upd("key")} />
+                                            <ToneSelector val={form.key} set={upd("key")}/>
                                         </Field>
                                         <Field label="Знак альтерации">
-                                            <AlterationSelector val={form.acc || "nat"} set={upd("acc")} />
+                                            <AlterationSelector val={form.acc || "nat"} set={upd("acc")}/>
                                         </Field>
                                         <Field label="Лад">
-                                            <ModeSelector val={form.mode || "major"} set={upd("mode")} />
+                                            <ModeSelector val={form.mode || "major"} set={upd("mode")}/>
                                         </Field>
                                     </>
                                 )}
                             </>
                         )}
 
-                        {!opera && <InputField label="Номер опуса" val={form.opus} set={upd("opus")} />}
-                        {!opera && <InputField label="Номер в каталоге" val={form.catalog} set={upd("catalog")} />}
-                        {!opera && <InputField label="Псевдоним (доп. название)" val={form.nickname} set={upd("nickname")} />}
+                        {!opera && <InputField label="Номер опуса" val={form.opus} set={upd("opus")}/>}
+                        {!opera && <InputField label="Номер в каталоге" val={form.catalog} set={upd("catalog")}/>}
+                        {!opera &&
+                            <InputField label="Псевдоним (доп. название)" val={form.nickname} set={upd("nickname")}/>}
                         {opera && (
                             <>
-                                <InputField label="Номер акта" val={form.operaAct} set={upd("operaAct")} />
-                                <InputField label="Номер сцены" val={form.operaScene} set={upd("operaScene")} />
+                                <InputField label="Номер акта" val={form.operaAct} set={upd("operaAct")}/>
+                                <InputField label="Номер сцены" val={form.operaScene} set={upd("operaScene")}/>
                             </>
                         )}
-                        <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")} />
+                        <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")}/>
 
-                        <Preview track={preview} authors={authors} />
+                        <Preview track={preview} authors={authors}/>
 
                         {/* contributors */}
-                        <InputField label="Оркестр или хор" val={form.orchestra} set={upd("orchestra")} />
-                        <InputField label="Дирижер" val={form.conductor} set={upd("conductor")} />
-                        <InputField label="Солист" val={form.soloist} set={upd("soloist")} />
-                        <Field label="Инструмент солиста"><Sel val={form.soloInstrument} set={upd("soloInstrument")} ph="—" arr={INSTRUMENTS} /></Field>
+                        <InputField label="Оркестр или хор" val={form.orchestra} set={upd("orchestra")}/>
+                        <InputField label="Дирижер" val={form.conductor} set={upd("conductor")}/>
+                        <InputField label="Солист" val={form.soloist} set={upd("soloist")}/>
+                        <Field label="Инструмент солиста"><Sel val={form.soloInstrument} set={upd("soloInstrument")}
+                                                               ph="—" arr={INSTRUMENTS}/></Field>
                         {vocal && (
                             <>
-                                <InputField label="Певец" val={form.singer} set={upd("singer")} />
-                                <Field label="Инструмент певца"><Sel val={form.singerInstrument} set={upd("singerInstrument")} ph="—" arr={INSTRUMENTS} /></Field>
+                                <InputField label="Певец" val={form.singer} set={upd("singer")}/>
+                                <Field label="Инструмент певца"><Sel val={form.singerInstrument}
+                                                                     set={upd("singerInstrument")} ph="—"
+                                                                     arr={INSTRUMENTS}/></Field>
                             </>
                         )}
-                        <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")} />
-                        <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")} />
-                        <InputField label="Автор" val={form.author} set={upd("author")} />
-                        <InputField label="Композитор(meta_data)" val={form.composer_meta} set={upd("composer_meta")} />
-                        <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")} />
+                        <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
+                        <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
+                        <InputField label="Автор" val={form.author} set={upd("author")}/>
+                        <InputField label="Композитор(meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
+                        <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
 
                         {/* rights */}
-                        <InputField label="℗ PLine" req val={form.pline} set={upd("pline")} />
-                        <Field label="Год записи" req><Sel val={form.year} set={upd("year")} ph="—" arr={YEARS} /></Field>
-                        <InputField label="Издатель" val={form.publisher} set={upd("publisher")} />
-                        <InputField label="ISRC" val={form.isrc} set={upd("isrc")} />
-                        <Field label="Попросить присвоить ISRC"><RG val={form.autoIsrc ? "yes" : "no"} set={v => upd("autoIsrc")(v === "yes")} opts={{ yes: "Да", no: "Нет" }} /></Field>
+                        <InputField label="℗ PLine" req val={form.pline} set={upd("pline")}/>
+                        <Field label="Год записи" req><Sel val={form.year} set={upd("year")} ph="—"
+                                                           arr={YEARS}/></Field>
+                        <InputField label="Издатель" val={form.publisher} set={upd("publisher")}/>
+                        <InputField label="ISRC" val={form.isrc} set={upd("isrc")}/>
+                        <Field label="Попросить присвоить ISRC"><RG val={form.autoIsrc ? "yes" : "no"}
+                                                                    set={v => upd("autoIsrc")(v === "yes")}
+                                                                    opts={{yes: "Да", no: "Нет"}}/></Field>
 
                         {/* genre */}
-                        <Field label="Жанр" req><Sel val={form.genre} set={upd("genre")} ph="Classical" arr={GENRES} /></Field>
-                        <Field label="Поджанр" req><Sel val={form.subGenre} set={upd("subGenre")} ph="—" arr={SUBGENRES} /></Field>
-                        <Field label="Дополнительный жанр"><Sel val={form.extraGenre} set={upd("extraGenre")} ph="—" arr={SUBGENRES} /></Field>
-                        <Field label="Уровень цен" req><Sel val={form.price} set={upd("price")} ph="—" arr={PRICES} /></Field>
-                        <InputField label="Номер в каталоге" val={form.labelCatalog} set={upd("labelCatalog")} />
+                        <Field label="Жанр" req><Sel val={form.genre} set={upd("genre")} ph="Classical"
+                                                     arr={GENRES}/></Field>
+                        <Field label="Поджанр" req><Sel val={form.subGenre} set={upd("subGenre")} ph="—"
+                                                        arr={SUBGENRES}/></Field>
+                        <Field label="Дополнительный жанр"><Sel val={form.extraGenre} set={upd("extraGenre")} ph="—"
+                                                                arr={SUBGENRES}/></Field>
+                        <Field label="Уровень цен" req><Sel val={form.price} set={upd("price")} ph="—"
+                                                            arr={PRICES}/></Field>
+                        <InputField label="Номер в каталоге" val={form.labelCatalog} set={upd("labelCatalog")}/>
 
-                        <Field label="Присутствие ненормативной лексики" req><RG val={form.explicit || "no"} set={upd("explicit")} opts={{ yes: "Да", no: "Нет", clean: "Чистая версия" }} /></Field>
-                        <InputField label="Начало превью / фрагмента" val={form.previewStart} set={upd("previewStart")} def="120.000" />
+                        <Field label="Присутствие ненормативной лексики" req><RG val={form.explicit || "no"}
+                                                                                 set={upd("explicit")} opts={{
+                            yes: "Да",
+                            no: "Нет",
+                            clean: "Чистая версия"
+                        }}/></Field>
+                        <InputField label="Начало превью / фрагмента" val={form.previewStart} set={upd("previewStart")}
+                                    def="120.000"/>
 
-                        <Field label="Язык названия композиции" req><Sel val={form.titleLang} set={upd("titleLang")} ph="—" arr={LANGUAGES} /></Field>
+                        <Field label="Язык названия композиции" req><Sel val={form.titleLang} set={upd("titleLang")}
+                                                                         ph="—" arr={LANGUAGES}/></Field>
                         {vocal && (
                             <>
-                                <Field label="Язык слов песни" req><Sel val={form.lyricsLang} set={upd("lyricsLang")} ph="—" arr={LANGUAGES} /></Field>
-                                <Field label="Текст песни"><textarea className="textarea" value={form.lyrics || ""} onChange={e => upd("lyrics")(e.target.value)} rows={3} /></Field>
+                                <Field label="Язык слов песни" req><Sel val={form.lyricsLang} set={upd("lyricsLang")}
+                                                                        ph="—" arr={LANGUAGES}/></Field>
+                                <Field label="Текст песни"><textarea className="textarea" value={form.lyrics || ""}
+                                                                     onChange={e => upd("lyrics")(e.target.value)}
+                                                                     rows={3}/></Field>
                             </>
                         )}
 
@@ -259,7 +298,7 @@ export default function TrackMetadataModal() {
 }
 
 /* ===== helpers ===== */
-const Field = ({ label, children, req }) => (
+const Field = ({label, children, req}) => (
     <div className="field">
         <label className="label">{label}{req && <span className="label-required">*</span>}</label>
         {children}
@@ -276,6 +315,14 @@ const RG = ({ val, set, opts }) => (
     <div className="radio-group" onChange={e => set(e.target.value)}>
         {Object.entries(opts).map(([v, l]) => (
             <label key={v} className="radio-option"><input type="radio" name={Math.random()} value={v} checked={val===v} onChange={() => {}} /> {l}</label>
+        ))}
+    </div>
+);
+
+const SubtypeRG = ({ val, set, opts }) => (
+    <div className="subtype-radio-group" onChange={e => set(e.target.value)}>
+        {Object.entries(opts).map(([v, l]) => (
+            <label key={v} className="subtype-radio-option"><input type="radio" name={Math.random()} value={v} checked={val===v} onChange={() => {}} /> {l}</label>
         ))}
     </div>
 );
