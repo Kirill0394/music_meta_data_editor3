@@ -1,4 +1,27 @@
 /* TrackMetadataModal.css */
+/* Оверлей растягиваем на весь экран и включаем flex */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;    /* вертикальное центрирование */
+    justify-content: center; /* горизонтальное центрирование */
+    z-index: 1000;           /* чтобы быть поверх остального контента */
+}
+
+/* Собственно окно диалога */
+.dialog {
+    border-radius: 0.375rem;
+    width: 48rem;     /* 768px, как было в .dialog-content */
+    max-width: 90%;   /* на узких экранах */
+    max-height: 90vh; /* чтобы не вылезать за высоту экрана */
+    overflow-y: auto; /* прокрутка содержимого */
+    padding: 1.5rem;  /* отступы по вкусу */
+}
+
 
 /* Диалог */
 .dialog-content {

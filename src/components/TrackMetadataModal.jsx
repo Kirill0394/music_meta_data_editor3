@@ -21,7 +21,7 @@ const INSTRUMENTS = [
 const PRICES = ["Frontline","Mid-price","Budget"];
 
 export default function TrackMetadataModal() {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const [form, setForm] = useState({
         contentType: "audio",
         mainType: "classical",
@@ -60,13 +60,13 @@ export default function TrackMetadataModal() {
         const opus = form.opus ? `, Op. ${form.opus}` : "";
         const cat = form.catalog ? `, ${form.catalog}` : "";
         const nick = form.nickname ? ` "${form.nickname}"` : "";
-        const ver = form.version ? ` (${form.version})` : "";
+        const ver = form.version ? ` (v${form.version})` : "";
         return `${work}${partNo}${partTitle}${key}${opus}${cat}${nick}${ver}`.trim();
     }, [form, keyBlock, opera]);
 
     return (
         <>
-            <button className="btn" onClick={() => setOpen(true)}>Track metadata</button>
+            {/*<button className="btn" onClick={() => setOpen(true)}>Track metadata</button>*/}
             {open && (
                 <div className="dialog-overlay" onClick={() => setOpen(false)}>
                     <div className="dialog" onClick={e => e.stopPropagation()}>
@@ -193,7 +193,7 @@ export default function TrackMetadataModal() {
                             </>
                         )}
 
-                        <div className="actions"><button className="btn" onClick={() => setOpen(false)}>Закрыть</button></div>
+                        {/*<div className="actions"><button className="btn" onClick={() => setOpen(false)}>Закрыть</button></div>*/}
                     </div>
                 </div>
             )}
