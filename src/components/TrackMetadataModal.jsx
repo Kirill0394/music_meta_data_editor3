@@ -117,15 +117,16 @@ export default function TrackMetadataModal() {
             }
             const composer = form.composer ?  `${form.composer}: ` : "";
             const work = form.workTitle || '';
+            const workNumber = form.workNumber ? ` No. ${form.workNumber}` : "";
             const key = keyBlock && form.key ?
                 ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
             const opus = form.opus ? `, Op. ${form.opus}` : "";
             const cat = form.catalog ? `, ${form.catalog}` : "";
             const nick = form.nickname ? ` "${form.nickname}"` : "";
-            const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
-            const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
+            const partNo = form.partNumber ? `: ${form.partNumber}.` : "";
+            const partTitle = form.partTitle ? (partNo !== '') ? ` ${form.partTitle}` : `: ${form.partTitle}`  : '';
             const ver = form.vrsn ? ` (${form.vrsn})` : "";
-            return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
+            return `${composer}${work}${workNumber}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
         }
         else if (music) {
             const composer = form.composer ?  `${form.composer}: ` : "";
@@ -135,8 +136,8 @@ export default function TrackMetadataModal() {
             const opus = form.opus ? `, Op. ${form.opus}` : "";
             const cat = form.catalog ? `, ${form.catalog}` : "";
             const nick = form.nickname ? ` "${form.nickname}"` : "";
-            const partNo = form.partNumber ? `: No. ${form.partNumber}` : "";
-            const partTitle = form.partTitle ? (partNo !== '') ? `, ${form.partTitle}` : `: ${form.partTitle}`  : '';
+            const partNo = form.partNumber ? `: ${form.partNumber}.` : "";
+            const partTitle = form.partTitle ? (partNo !== '') ? ` ${form.partTitle}` : `: ${form.partTitle}`  : '';
             const ver = form.vrsn ? ` (${form.vrsn})` : "";
             return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
         }
@@ -319,6 +320,12 @@ export default function TrackMetadataModal() {
                                     <InputField label="Название оперы" req val={form.operaTitle} set={upd("operaTitle")}/>}
                                 {opera &&
                                     <InputField label="Название отрывка" val={form.operaExcerpt} set={upd("operaExcerpt")}/>}
+
+                                {part && !opera && (
+                                        <InputField label="Номер произведения" val={form.workNumber} set={upd("workNumber")}/>
+                                )}
+                                {!opera &&
+                                    <InputField label="Псевдоним (доп. название)" val={form.nickname} set={upd("nickname")}/>}
                                 {part && !opera && (
                                     <>
                                         <InputField label="Номер части" val={form.partNumber} set={upd("partNumber")}/>
@@ -354,8 +361,6 @@ export default function TrackMetadataModal() {
 
                                 {!opera && <InputField label="Номер опуса" val={form.opus} set={upd("opus")}/>}
                                 {!opera && <InputField label="Номер в каталоге" val={form.catalog} set={upd("catalog")}/>}
-                                {!opera &&
-                                    <InputField label="Псевдоним (доп. название)" val={form.nickname} set={upd("nickname")}/>}
                                 {opera && (
                                     <>
                                         <InputField label="Номер акта" val={form.operaAct} set={upd("operaAct")}/>
