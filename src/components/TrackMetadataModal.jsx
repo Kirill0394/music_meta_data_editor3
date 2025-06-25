@@ -321,7 +321,7 @@ export default function TrackMetadataModal() {
                                 {opera &&
                                     <InputField label="Название отрывка" val={form.operaExcerpt} set={upd("operaExcerpt")}/>}
 
-                                {part && !opera && (
+                                {!opera && (
                                         <InputField label="Номер произведения" val={form.workNumber} set={upd("workNumber")}/>
                                 )}
                                 {!opera &&
