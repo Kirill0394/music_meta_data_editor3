@@ -75,7 +75,9 @@ const LANGUAGES = [
 const INSTRUMENTS = [
     "Piano","Violin","Cello","Flute","Oboe","Clarinet","Trumpet","Guitar","Organ","Voice",
 ];
-const PRICES = ["Frontline","Mid-price","Budget"];
+const PRICES = ["Back : 10руб / 0.69$ / 0.69€",
+    "Mid : 15руб / 0.99$ / 0.99€",
+    "Front : 19руб / 1.29$ / 1.29€"];
 
 export default function TrackMetadataModal() {
     const [open, setOpen] = useState(true);
@@ -90,80 +92,145 @@ export default function TrackMetadataModal() {
         keySpecified: true,
         musicGenre: "—",
         clsGenre: "Classical",
-    });
-    const upd = key => val => setForm(p => ({ ...p, [key]: val }));
+        /* ---- multi‑value contributor fields ---- */
+        composer: [""],
+        orchestra: [""],
+        conductor: [""],
+        soloist: [""],
+        singer: [""],
+        featured: [""],
+        remixer: [""],
+        author: [""],
+        composer_meta: [""],
+        arranger: [""],
+        character: [""],
+        mainPerformer: [""],
 
-    /* flags */
+        /* ---- the rest remain scalar ---- */
+        workTitle: "",
+        vrsn: "",
+        mainPerformerInstrument: "",
+        soloInstrument: "",
+        singerInstrument: "",
+        remixerInstrument: "",
+        pline: "",
+        year: "",
+        publisher: "",
+        isrc: "",
+        autoIsrc: false,
+        subGenre: "",
+        extraGenre: "",
+        price: "",
+        labelCatalog: "",
+        explicit: "no",
+        previewStart: "120.000",
+
+        /* classical‑specific scalar fields */
+        workNumber: "",
+        key: "C",
+        acc: "nat",
+        mode: "major",
+        opus: "",
+        catalog: "",
+        nickname: "",
+        partNumber: "",
+        partTitle: "",
+        operaTitle: "",
+        operaExcerpt: "",
+        operaAct: "",
+        operaScene: "",
+    });
+
+    const upd = (key) => (val) => setForm((p) => ({ ...p, [key]: val }));
+
+    /* ========== flags ========== */
     const cls = form.mainType === "classical";
     const opera = form.addClsType === "opera";
     const part = !form.whole;
     const subtype = cls && part && !opera;
-    const keyBlock = cls && form.keySpecified && !opera;
+    const keyBlock = cls && !opera && form.keySpecified;
     const vocal = !form.instrumental;
     const music = form.mainType === "music";
 
-
-    /* preview */
+    /* ========== preview generator ========== */
     const preview = useMemo(() => {
+        const concat = (arr) => (Array.isArray(arr) ? arr.filter(Boolean).join(", ") : arr || "");
+        const composerNames = concat(form.composer);
+        const characterNames = concat(form.character);
+
         if (cls) {
             if (opera) {
-                const c = form.composer ?  `${form.composer}: ` : "";
+                const c = composerNames ? `${composerNames}: ` : "";
                 const o = form.operaTitle || "";
+                const opus = form.opus ? `, Op. ${form.opus}` : "";
+                const cat = form.catalog ? `, ${form.catalog}` : "";
                 const an = form.operaAct ? `, Act ${form.operaAct}` : "";
                 const sn = form.operaScene ? `, Scene ${form.operaScene}` : "";
-                const ex = form.operaExcerpt ? ` — ${form.operaExcerpt}` : "";
-                const v = form.vrsn ? ` (${form.vrsn})` : "";
-                return `${c}${o}${an}${sn}${ex}${v}`.trim();
+                const ex = form.operaExcerpt ? `: "${form.operaExcerpt}"` : "";
+                const character = characterNames ? ` (${characterNames})` : "";
+                const v = form.vrsn ? ` [${form.vrsn}]` : "";
+                return `${c}${o}${opus}${cat}${an}${sn}${ex}${character}${v}`.trim();
             }
-            const composer = form.composer ?  `${form.composer}: ` : "";
-            const work = form.workTitle || '';
+            const composer = composerNames ? `${composerNames}: ` : "";
+            const work = form.workTitle || "";
             const workNumber = form.workNumber ? ` No. ${form.workNumber}` : "";
-            const key = keyBlock && form.key ?
-                ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
+            const key =
+                keyBlock && form.key
+                    ? ` in ${form.key}${
+                        form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""
+                    } ${form.mode === "minor" ? "Minor" : "Major"}`
+                    : "";
             const opus = form.opus ? `, Op. ${form.opus}` : "";
             const cat = form.catalog ? `, ${form.catalog}` : "";
             const nick = form.nickname ? ` "${form.nickname}"` : "";
             const partNo = form.partNumber ? `: ${form.partNumber}.` : "";
-            const partTitle = form.partTitle ? (partNo !== '') ? ` ${form.partTitle}` : `: ${form.partTitle}`  : '';
+            const partTitle = form.partTitle ? (partNo !== "" ? ` ${form.partTitle}` : `: ${form.partTitle}`) : "";
             const ver = form.vrsn ? ` (${form.vrsn})` : "";
             return `${composer}${work}${workNumber}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
         }
-        else if (music) {
-            const composer = form.composer ?  `${form.composer}: ` : "";
-            const work = form.workTitle || '';
-            const key = keyBlock && form.key ?
-                ` in ${form.key}${form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""} ${form.mode === "minor" ? "Minor" : "Major"}` : "";
+
+        if (music) {
+            const composer = composerNames ? `${composerNames}: ` : "";
+            const work = form.workTitle || "";
+            const key =
+                keyBlock && form.key
+                    ? ` in ${form.key}${
+                        form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""
+                    } ${form.mode === "minor" ? "Minor" : "Major"}`
+                    : "";
             const opus = form.opus ? `, Op. ${form.opus}` : "";
             const cat = form.catalog ? `, ${form.catalog}` : "";
             const nick = form.nickname ? ` "${form.nickname}"` : "";
             const partNo = form.partNumber ? `: ${form.partNumber}.` : "";
-            const partTitle = form.partTitle ? (partNo !== '') ? ` ${form.partTitle}` : `: ${form.partTitle}`  : '';
+            const partTitle = form.partTitle ? (partNo !== "" ? ` ${form.partTitle}` : `: ${form.partTitle}`) : "";
             const ver = form.vrsn ? ` (${form.vrsn})` : "";
             return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
         }
+    }, [form, cls, music, keyBlock, opera]);
 
-    }, [form, keyBlock, opera]);
-
+    /* ========== authors line ========== */
     const authors = useMemo(() => {
-        /* 1. Набираем все существующие значения в массив */
-        const parts = [];
+        const collect = (src) => (Array.isArray(src) ? src.filter(Boolean) : src ? [src] : []);
 
-        if (form.author)    parts.push(form.author);
-        if (form.orchestra) parts.push(form.orchestra);
-        if (form.conductor) parts.push(form.conductor);
-        if (form.soloist)   parts.push(form.soloist);
+        const parts = [
+            ...collect(form.author),
+            ...collect(form.orchestra),
+            ...collect(form.conductor),
+            ...collect(form.soloist),
+            ...collect(form.singer),
+        ];
 
-        /* 2. Склеиваем через запятую  */
-        let base = parts.join(', ');
+        let base = parts.join(", ");
 
-        /* 3. Добавляем «feat.»-часть, если нужна */
-        if (form.featured) base += ` (feat. ${form.featured})`;
+        const featList = collect(form.featured);
+        if (featList.length) base += ` (feat. ${featList.join(", ")})`;
 
-        /* 4. Возвращаем в нужном «режиме» */
-        if (cls)   return base.trim();                    // полная строка
-        if (music) return `${form.author ?? ''}${form.featured ? ` (feat. ${form.featured})` : ''}`.trim();
+        if (cls) return base.trim();
+        if (music) return `${collect(form.author).join(", ")}${
+            featList.length ? ` (feat. ${featList.join(", ")})` : ""
+        }`.trim();
 
-        return '';                                       // на всякий случай
+        return "";
     }, [form, cls, music]);
 
 
@@ -212,7 +279,7 @@ export default function TrackMetadataModal() {
                                         opts={{ yes: "Да", no: "Нет" }}
                                     />
                                 </Field>
-                                <InputField label="Автор" req val={form.author} set={upd("author")}/>
+                                <MultiInputField label="Автор" req val={form.author} set={upd("author")}/>
                                 <InputField label="Название" req
                                             val={form.workTitle}
                                             set={upd("workTitle")}
@@ -224,9 +291,9 @@ export default function TrackMetadataModal() {
 
                                 <Preview track={preview} authors={authors}/>
 
-                                <Field label="Основной исполнитель">
+                                <Field>
 
-                                    <InputField val={form.mainPerformer} set={upd("mainPerformer")}/>
+                                    <InputField label="Основной исполнитель" val={form.mainPerformer} set={upd("mainPerformer")}/>
                                     <Field label="Инструмент исполнителя">
                                         <Sel
                                             val={form.mainPerformerInstrument}
@@ -237,10 +304,10 @@ export default function TrackMetadataModal() {
                                     </Field>
 
                                 </Field>
-                                <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
-                                <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
-                                <InputField label="Композитор (meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
-                                <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
+                                <MultiInputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
+                                <MultiInputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
+                                <MultiInputField label="Композитор (meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
+                                <MultiInputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
 
                                 {/* rights */}
                                 <InputField label="℗ PLine" req val={form.pline} set={upd("pline")}/>
@@ -290,11 +357,12 @@ export default function TrackMetadataModal() {
                                         <RG val={form.addClsType} set={upd("addClsType")}
                                             opts={{opera: "Опера", other: "Другая классическая музыка"}}/>
                                     </Field>
+                                {!opera && (
                                     <Field label="Данная композиция – это">
                                         <RG val={form.whole ? "whole" : "part"} set={v => upd("whole")(v === "whole")}
                                             opts={{whole: "произведение целиком", part: "часть произведения"}}/>
                                     </Field>
-
+                                )}
 
                                 {subtype && (
                                     <Field label="Данное произведение – это">
@@ -313,7 +381,7 @@ export default function TrackMetadataModal() {
                                 </Field>
 
                                 {/* titles */}
-                                <InputField label="Композитор" req val={form.composer} set={upd("composer")}/>
+                                <MultiInputField label="Композитор" val={form.composer} set={upd("composer")}/>
                                 {!opera &&
                                     <InputField label="Название произведения" req val={form.workTitle} set={upd("workTitle")}/>}
                                 {opera &&
@@ -329,15 +397,18 @@ export default function TrackMetadataModal() {
                                 {part && !opera && (
                                     <>
                                         <InputField label="Номер части" val={form.partNumber} set={upd("partNumber")}/>
-                                        <InputField label="Название части" val={form.partTitle} set={upd("partTitle")}/>
+                                        <InputField label="Название части или темп" val={form.partTitle} set={upd("partTitle")}/>
                                     </>
                                 )}
 
-                                <div className="key-toggle">
-                                    <input id="nokey" type="checkbox" checked={!form.keySpecified}
-                                           onChange={e => upd("keySpecified")(!e.target.checked)}/>
-                                    <label htmlFor="nokey">Тональность не указана</label>
-                                </div>
+                                {(cls && !opera) && (
+                                    <div className="key-toggle">
+                                        <input id="nokey" type="checkbox" checked={!form.keySpecified}
+                                               onChange={e => upd("keySpecified")(!e.target.checked)}/>
+                                        <label htmlFor="nokey">Тональность не указана</label>
+                                    </div>
+                                )}
+
 
                                 {/* key */}
                                 {keyBlock && (
@@ -359,12 +430,13 @@ export default function TrackMetadataModal() {
                                     </>
                                 )}
 
-                                {!opera && <InputField label="Номер опуса" val={form.opus} set={upd("opus")}/>}
-                                {!opera && <InputField label="Номер в каталоге" val={form.catalog} set={upd("catalog")}/>}
+                                <InputField label="Номер опуса" val={form.opus} set={upd("opus")}/>
+                                <InputField label="Номер в каталоге" val={form.catalog} set={upd("catalog")}/>
                                 {opera && (
                                     <>
                                         <InputField label="Номер акта" val={form.operaAct} set={upd("operaAct")}/>
                                         <InputField label="Номер сцены" val={form.operaScene} set={upd("operaScene")}/>
+                                        <MultiInputField label="Персонаж" val={form.character} set={upd("character")}/>
                                     </>
                                 )}
                                 <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")}/>
@@ -372,31 +444,31 @@ export default function TrackMetadataModal() {
                                 <Preview track={preview} authors={authors}/>
 
                                 {/* contributors */}
-                                <InputField label="Оркестр или хор" val={form.orchestra} set={upd("orchestra")}/>
-                                <InputField label="Дирижер" val={form.conductor} set={upd("conductor")}/>
-                                <InputField label="Солист" val={form.soloist} set={upd("soloist")}/>
+                                <MultiInputField label="Оркестр или хор" val={form.orchestra} set={upd("orchestra")}/>
+                                <MultiInputField label="Дирижер" val={form.conductor} set={upd("conductor")}/>
+                                <MultiInputField label="Солист" val={form.soloist} set={upd("soloist")}/>
                                 <Field label="Инструмент солиста"><Sel val={form.soloInstrument} set={upd("soloInstrument")}
                                                                        ph="—" arr={INSTRUMENTS}/></Field>
                                 {vocal && (
                                     <>
-                                        <InputField label="Певец" val={form.singer} set={upd("singer")}/>
+                                        <MultiInputField label="Певец" val={form.singer} set={upd("singer")}/>
                                         <Field label="Инструмент певца"><Sel val={form.singerInstrument}
                                                                              set={upd("singerInstrument")} ph="—"
                                                                              arr={INSTRUMENTS}/></Field>
                                     </>
                                 )}
-                                <InputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
-                                <InputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
-                                <InputField label="Автор" val={form.author} set={upd("author")}/>
-                                <InputField label="Композитор (meta_data)" val={form.composer_meta} set={upd("composer_meta")}/>
-                                <InputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
+                                <MultiInputField label="Приглашенный исполнитель" val={form.featured} set={upd("featured")}/>
+                                <MultiInputField label="Автор ремикса" val={form.remixer} set={upd("remixer")}/>
+                                <MultiInputField label="Автор" req val={form.author} set={upd("author")}/>
+                                <MultiInputField label="Композитор (meta_data)" req val={form.composer_meta} set={upd("composer_meta")}/>
+                                <MultiInputField label="Аранжировщик" val={form.arranger} set={upd("arranger")}/>
 
                                 {/* rights */}
                                 <InputField label="℗ PLine" req val={form.pline} set={upd("pline")}/>
                                 <Field label="Год записи" req><Sel val={form.year} set={upd("year")} ph="—"
                                                                    arr={YEARS}/></Field>
                                 <InputField label="Издатель" val={form.publisher} set={upd("publisher")}/>
-                                <InputField label="ISRC" val={form.isrc} set={upd("isrc")}/>
+                                <InputField label="Международный стандартный код записи (ISRC)" placeholder="XX-0X0-00-00000" val={form.isrc} set={upd("isrc")}/>
                                 <Field label="Попросить присвоить ISRC"><RG val={form.autoIsrc ? "yes" : "no"}
                                                                             set={v => upd("autoIsrc")(v === "yes")}
                                                                             opts={{yes: "Да", no: "Нет"}}/></Field>
@@ -452,13 +524,58 @@ const Field = ({label, children, req}) => (
     </div>
 );
 
-const InputField = ({ label, req, val, set, def = "" }) => (
+const InputField = ({ label, placeholder, req, val, set, def = "" }) => (
     <Field label={label} req={req}>
-        <input className="input" value={val ?? def} onChange={e => set(e.target.value)} />
+        <input className="input" placeholder={placeholder} value={val ?? def} onChange={e => set(e.target.value)} />
     </Field>
 );
 
-const RG = ({ val, set, opts }) => (
+const MultiInputField = ({ label, req, val, set }) => (
+
+    <Field>
+            <label className="multi-input-label">{label}{req && <span className="label-required">*</span>}</label>
+            {val.map((v, i) => (
+                <div className="multi-input-field">
+                <div key={i} className="multi-input-row">
+                    <input
+                        className="input"
+                        value={v}
+                        onChange={(e) => {
+                            const next = [...val];
+                            next[i] = e.target.value;
+                            set(next);
+                        }}
+                    />
+                    <button
+                        type="button"
+                        className="add-btn"
+                        onClick={() => set([...val, ""])}
+                    >
+                        +
+                    </button>
+                    {i !== 0 && (
+                        <button
+                            type="button"
+                            className="remove-btn"
+                            onClick={() => {
+                                const next = val.filter((_, idx) => idx !== i);
+                                set(next.length ? next : [""]); // keep at least one field
+                            }}
+                        >
+                            ×
+                        </button>
+                    )}
+                </div>
+                </div>
+
+            ))}
+    </Field>
+);
+
+
+const RG = ({
+                val, set, opts
+            }) => (
     <div className="radio-group" onChange={e => set(e.target.value)}>
         {Object.entries(opts).map(([v, l]) => (
             <label key={v} className="radio-option"><input type="radio" name={Math.random()} value={v} checked={val===v} onChange={() => {}} /> {l}</label>
