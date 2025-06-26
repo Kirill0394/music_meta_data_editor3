@@ -192,19 +192,9 @@ export default function TrackMetadataModal() {
         if (music) {
             const composer = composerNames ? `${composerNames}: ` : "";
             const work = form.workTitle || "";
-            const key =
-                keyBlock && form.key
-                    ? ` in ${form.key}${
-                        form.acc === "sharp" ? "-Sharp" : form.acc === "flat" ? "-Flat" : ""
-                    } ${form.mode === "minor" ? "Minor" : "Major"}`
-                    : "";
-            const opus = form.opus ? `, Op. ${form.opus}` : "";
             const cat = form.catalog ? `, ${form.catalog}` : "";
-            const nick = form.nickname ? ` "${form.nickname}"` : "";
-            const partNo = form.partNumber ? `: ${form.partNumber}.` : "";
-            const partTitle = form.partTitle ? (partNo !== "" ? ` ${form.partTitle}` : `: ${form.partTitle}`) : "";
             const ver = form.vrsn ? ` (${form.vrsn})` : "";
-            return `${composer}${work}${key}${opus}${cat}${nick}${partNo}${partTitle}${ver}`.trim();
+            return `${composer}${work}${cat}${ver}`.trim();
         }
     }, [form, cls, music, keyBlock, opera]);
 
@@ -400,6 +390,10 @@ export default function TrackMetadataModal() {
                                         <InputField label="Название части или темп" val={form.partTitle} set={upd("partTitle")}/>
                                     </>
                                 )}
+                                {cls && !opera &&(
+                                    <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")}/>
+                                ) }
+
 
                                 {(cls && !opera) && (
                                     <div className="key-toggle">
@@ -437,9 +431,10 @@ export default function TrackMetadataModal() {
                                         <InputField label="Номер акта" val={form.operaAct} set={upd("operaAct")}/>
                                         <InputField label="Номер сцены" val={form.operaScene} set={upd("operaScene")}/>
                                         <MultiInputField label="Персонаж" val={form.character} set={upd("character")}/>
+                                        <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")}/>
+
                                     </>
                                 )}
-                                <InputField label="Версия/Подзаголовок" val={form.vrsn} set={upd("vrsn")}/>
 
                                 <Preview track={preview} authors={authors}/>
 
